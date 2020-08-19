@@ -28,7 +28,7 @@
     {{ Form::open(['route' => 'submit-answer', 'files' => true, 'id' => 'SubmitForm']) }}
         {{ Form::hidden('SubmitToken', $submitToken) }}
         <article class="sub-heading text-white" style="font-size: calc(8px + 1em);">
-            Unggah jawaban anda : 
+            Unggah jawaban anda (.pdf) : 
         </article>
         <div class="form-group" style="margin-top: 12px;">
             {{ Form::label('FileSubmit', 'Pilih file', [
@@ -51,19 +51,19 @@
                     <table id="FileDetailsTable">
                         <thead>
                             <tr>
-                                <th style="width: 45%;"></th>
-                                <th style="width: 10%;"></th>
-                                <th style="width: 100%;"></th>
+                                <th style="width:45%"></th>
+                                <th style="width:10%"></th>
+                                <th style="width:100%"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr >
                                 <td>Waktu Unggahan</td> <td>:</td> <td>{{ $detailJawaban['Upload Date'] }}</td>
                             </tr>
-                            <tr>
+                            <tr >
                                 <td>Nama File</td> <td>:</td> <td>{{ $detailJawaban['Name'] }}</td>
                             </tr>
-                            <tr>
+                            <tr >
                                 <td>Ukuran File</td> <td>:</td> <td>{{ $detailJawaban['Size'] }} kilobytes</td>
                             </tr>
                         </tbody>

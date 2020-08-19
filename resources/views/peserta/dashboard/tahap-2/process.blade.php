@@ -28,7 +28,7 @@
     {{ Form::open(['route' => 'submit-answer', 'files' => true, 'id' => 'SubmitForm']) }}
         {{ Form::hidden('SubmitToken', $submitToken) }}
         <article class="sub-heading text-white" style="font-size: calc(8px + 1em);">
-            Unggah jawaban anda : 
+            Unggah jawaban anda (.pdf) : 
         </article>
         <div class="form-group" style="margin-top: 12px;">
             {{ Form::label('FileSubmit', 'Pilih file', [

@@ -337,20 +337,9 @@ footer {
   padding: 36px;
   background-color: #0e1c38;
   border-radius: 16px;
-  height: 45em;
+  height: fit-content;
 }
-@media (min-width: 576px) {
-  /* line 269, ../sass/stylesheets.scss */
-  .text-box {
-    height: 35em;
-  }
-}
-@media (min-width: 992px) {
-  /* line 269, ../sass/stylesheets.scss */
-  .text-box {
-    height: 32em;
-  }
-}
+
 /* line 283, ../sass/stylesheets.scss */
 .text-box .download-file {
   margin: 12px 0 0;
@@ -621,4 +610,26 @@ footer {
   .tujuan ol {
     max-width: 80%;
   }
+}
+
+.modal-button{
+  width: 100px;
+  font-weight: 600;
+}
+
+.modal-close{
+  color: gray;
+  text-align: right;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 6px;
+  right: 20px;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
