@@ -13,5 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(TimelineSeeder::class);
         $this->call(TahapSeeder::class);
+        $this->call(RoleSeeder::class);
+        $this->call(NotificationTypeSeeder::class);
     }
 }

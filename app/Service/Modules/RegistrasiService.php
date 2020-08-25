@@ -5,8 +5,10 @@ namespace App\Service\Modules;
 use App\Model\DB\Pembayaran;
 use App\Model\DB\DetailPeserta;
 use App\Model\Lookups\Registrasi;
+use App\Model\Lookups\Tahap;
 use App\Model\Lookups\Timeline;
 use App\Service\Contracts\IRegistrasiService;
+use App\Repository\Contracts\IAdminRepository;
 use App\Repository\Contracts\IPesertaRepository;
 use App\Repository\Contracts\IPembayaranRepository;
 use App\Repository\Contracts\IDetailPesertaRepository;
@@ -17,17 +19,20 @@ use Illuminate\Support\Str;
 
 class RegistrasiService implements IRegistrasiService
 {
+    private $adminRepository;
     private $pesertaRepository;
     private $pembayaranRepository;
     private $detailPesertaRepository;
     private $timelineRepository;
 
     public function __construct(
+        IAdminRepository $adminRepository,
         IPesertaRepository $pesertaRepository,
         IPembayaranRepository $pembayaranRepository,
         IDetailPesertaRepository $detailPesertaRepository,
         ITimelineRepository $timelineRepository
     ) {
+        $this->adminRepository = $adminRepository;
         $this->pesertaRepository = $pesertaRepository;
         $this->pembayaranRepository = $pembayaranRepository;
         $this->detailPesertaRepository = $detailPesertaRepository;
@@ -150,5 +155,114 @@ class RegistrasiService implements IRegistrasiService
         $latest_pembayaran->BuktiTransfer = $newFileName;
         $latest_pembayaran->deleted_at = Carbon::now();
         $this->pembayaranRepository->InsertUpdate($latest_pembayaran);
+    }
+
+    public function GetPesertas()
+    {
+        $pesertas = $this->pesertaRepository->FindAll();
+        return $pesertas->map(function ($item, $key)
+        {
+            return [
+                'id' => $item->id,
+                'KodePeserta' => $item->KodePeserta ?? 'Email Unverified',
+                'Nama' => $item->name,
+                'email' => $item->email,
+                'Tahap' => ($item->tahap_id == Tahap::SELESAI) 
+                            ? 'Tahap 3' 
+                            : Tahap::GetConstantName($item->tahap_id),
+                'Status Registrasi' => $this->CekStatusRegistrasi($item->id)
+            ];
+        });
+    }
+
+    private function CekStatusRegistrasi($peserta_id)
+    {
+        $pembayaran = $this->pembayaranRepository->FindByPeserta($peserta_id);
+        if (is_null($pembayaran)){
+            return 'In Progress';
+        }
+
+        $detail_peserta = $this->detailPesertaRepository->FindByPeserta($peserta_id);
+        if ($detail_peserta->isEmpty()){
+            return 'In Progress';
+        }
+
+        if (is_null($pembayaran->StatusVerifikasi)){
+            return 'Needs Verification';
+        }
+        else if ($pembayaran->StatusVerifikasi == -1){
+            return 'Verification Failed';
+        }
+        else {
+            return 'Finished';
+        }
+    }
+
+    public function GetInfoPeserta($peserta_id)
+    {
+        $result = [];
+        $peserta = $this->pesertaRepository->Find($peserta_id);
+        $result = [
+            'Account' => [
+                'id' => $peserta->id,
+                'Kode Peserta' => $peserta->KodePeserta ?? 'Email Unverified',
+                'Nama' => $peserta->name,
+                'Email' => $peserta->email,
+                'No. HP' => $peserta->NoHP
+            ]
+        ];
+
+        $pembayaran = $this->pembayaranRepository->FindByPeserta($peserta_id);
+        if (!is_null($pembayaran)){
+            $admin_verifier = $this->adminRepository->Find($pembayaran->admin_id ?? 0);
+            $result['Payment'] = [
+                'id' => $pembayaran->id,
+                'Nama Pengirim' => $pembayaran->Pengirim,
+                'Nama Bank' => $pembayaran->Bank,
+                'Waktu Submit' => $pembayaran->created_at,
+                'Status Verifikasi' => $pembayaran->StatusVerifikasi,
+                'Verified By' => (is_null($admin_verifier) ? '' : $admin_verifier->name),
+            ];
+        }
+
+        $detail_peserta = $this->detailPesertaRepository->FindByPeserta($peserta_id);
+        if (!is_null($detail_peserta) && !$detail_peserta->isEmpty()){
+            $result['Detail'] = [];
+            $result['Detail']['Peserta'] = array_merge($detail_peserta
+                    ->makeHidden(['created_at', 'updated_at', 'deleted_at', 'peserta_id'])
+                    ->toArray(),
+            );
+            $result['Detail']['Waktu Submit'] = $detail_peserta->first()->created_at;
+        }
+        // dd($result);
+        return $result;
+    }
+
+    public function VerifyPayment($pembayaran_id, $statusVerifikasi, $admin_id)
+    {
+        $pembayaran = $this->pembayaranRepository->Find($pembayaran_id);
+        $pembayaran->StatusVerifikasi = $statusVerifikasi;
+        $pembayaran->admin_id = $admin_id;
+        $this->pembayaranRepository->InsertUpdate($pembayaran);
+
+        if ($statusVerifikasi == 1){
+            $peserta = $this->pesertaRepository->Find($pembayaran->peserta_id);
+            $peserta->tahap_id = Tahap::TAHAP_1;
+            $this->pesertaRepository->InsertUpdate($peserta);
+        }
+    }
+
+    public function GetKTMPeserta($peserta_id)
+    {
+        $detail_peserta = $this->detailPesertaRepository->FindByPeserta($peserta_id);
+        if (is_null($detail_peserta) || $detail_peserta->isEmpty()){
+            return collect([]);
+        }
+
+        $peserta = $this->pesertaRepository->Find($peserta_id);
+        return collect([
+            'Kode Peserta' => $peserta->KodePeserta,
+            'KTM' => $detail_peserta->pluck('KTM')
+        ]);
     }
 }

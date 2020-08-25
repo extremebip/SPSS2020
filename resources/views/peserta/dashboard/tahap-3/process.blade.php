@@ -57,13 +57,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr >
+                            <tr>
                                 <td>Waktu Unggahan</td> <td>:</td> <td>{{ $detailJawaban['Upload Date'] }}</td>
                             </tr>
-                            <tr >
+                            <tr>
                                 <td>Nama File</td> <td>:</td> <td>{{ $detailJawaban['Name'] }}</td>
                             </tr>
-                            <tr >
+                            <tr>
                                 <td>Ukuran File</td> <td>:</td> <td>{{ $detailJawaban['Size'] }} kilobytes</td>
                             </tr>
                         </tbody>

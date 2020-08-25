@@ -18,4 +18,21 @@ class JawabanRepository extends BaseRepository implements IJawabanRepository
                       ->where('tahap_id', '=', $tahap_id)
                       ->first();
     }
+
+    public function FindAllByTahapAndWhereInByPeserta($peserta_ids, $tahap_id)
+    {
+        return Jawaban::where('tahap_id', '=', $tahap_id)
+                      ->whereIn('peserta_id', $peserta_ids)
+                      ->get();
+    }
+
+    public function FindAllByTahap($tahap_id)
+    {
+        return Jawaban::where('tahap_id', '=', $tahap_id)->get();
+    }
+
+    public function FindByFileSubmit($fileSubmit)
+    {
+        return Jawaban::where('FileSubmit', '=', $fileSubmit)->first();
+    }
 }

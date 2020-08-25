@@ -14,10 +14,12 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $repositories = [
+        'AdminRepository',
         'DetailPesertaRepository',
         'JawabanRepository',
         'PembayaranRepository',
         'PesertaRepository',
+        'RoleRepository',
         'TimelineRepository',
     ];
 
@@ -27,9 +29,11 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $services = [
+        'AdminService',
         'AuthService',
         'DashboardService',
         'LombaService',
+        'NotificationService',
         'RegistrasiService',
         'TimelineService'
     ];
@@ -42,13 +46,13 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register all repositories
         foreach ($this->repositories as $repository) {
-            $this->app->bind("App\Repository\Contracts\I{$repository}",
+            $this->app->singleton("App\Repository\Contracts\I{$repository}",
                              "App\Repository\Repositories\\{$repository}");
         }
 
         // Register all services
         foreach ($this->services as $service) {
-            $this->app->bind("App\Service\Contracts\I{$service}", 
+            $this->app->singleton("App\Service\Contracts\I{$service}", 
                              "App\Service\Modules\\{$service}");
         }
     }
@@ -60,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        $this->collectionMacro();
     }
 
     /**

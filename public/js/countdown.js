@@ -3,7 +3,7 @@ var Countdown = {
         home: '{days}:{hours}:{minutes}:{seconds}',
         dashboard: '{days} hari {hours} jam {minutes} menit {seconds} detik'
     },
-    doCountdown: function (format, tagId, time, doReload = true) {
+    doCountdown: function (format, tagId, time, doReload = true, doneCallback = null) {
         var x = setInterval(function () {
             var now = new Date().getTime();
 
@@ -34,7 +34,11 @@ var Countdown = {
                 clearInterval(x);
                 if (doReload)
                     location.reload();
+                if (doneCallback !== null)
+                    doneCallback();
             }
         }, 1000);
+
+        return x;
     }
 };

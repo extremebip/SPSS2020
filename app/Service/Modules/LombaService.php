@@ -7,16 +7,23 @@ use App\Model\Lookups\Tahap;
 use App\Model\Lookups\Timeline;
 use App\Model\Lookups\KodeFile;
 use App\Service\Contracts\ILombaService;
+use App\Repository\Contracts\IAdminRepository;
 use App\Repository\Contracts\IJawabanRepository;
+use App\Repository\Contracts\IPesertaRepository;
 use App\Repository\Contracts\ITimelineRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class LombaService implements ILombaService
 {
+    private $adminRepository;
+
     private $jawabanRepository;
+
+    private $pesertaRepository;
 
     private $timelineRepository;
 
@@ -27,10 +34,14 @@ class LombaService implements ILombaService
     ];
 
     public function __construct(
+        IAdminRepository $adminRepository,
         IJawabanRepository $jawabanRepository,
+        IPesertaRepository $pesertaRepository,
         ITimelineRepository $timelineRepository
     ) {
+        $this->adminRepository = $adminRepository;
         $this->jawabanRepository = $jawabanRepository;
+        $this->pesertaRepository = $pesertaRepository;
         $this->timelineRepository = $timelineRepository;
     }
 
@@ -156,7 +167,7 @@ class LombaService implements ILombaService
         return true;
     }
 
-    public function DownloadAnswer($answerFileParam, $peserta)
+    public function DownloadAnswer($answerFileParam, $peserta, $admin_id = null)
     {
         $mapAllowedTimelineToDownload = [
             Tahap::TAHAP_1 => [
@@ -174,32 +185,47 @@ class LombaService implements ILombaService
         ];
         $result = ['Downloadable' => false, 'File Path' => '', 'Download File Name' => ''];
 
-        $answer = $this->jawabanRepository->FindByPesertaAndTahap($peserta->id, $peserta->tahap_id);
-        if (is_null($answer))
-            return $result;
-        
-        if ($answer->FileSubmit !== $answerFileParam)
-            return $result;
-
-        $timelines = $this->timelineRepository->FindAllWhereIn([
-            $mapAllowedTimelineToDownload[$peserta->tahap_id]['min-lesser'],
-            $mapAllowedTimelineToDownload[$peserta->tahap_id]['max-greater']
-        ]);
-        
-        $now = Carbon::now();
-        if ($now->lessThan($timelines[0]) || $now->greaterThan($timelines[1]))
-            return $result;
+        if (is_null($admin_id)){
+            $answer = $this->jawabanRepository->FindByPesertaAndTahap($peserta->id, $peserta->tahap_id);
+            if (is_null($answer))
+                return $result;
             
-        if (!is_null($answer->WaktuFinalisasi))
-            return $result;
+            if ($answer->FileSubmit !== $answerFileParam)
+                return $result;
 
-        $filePath = $file_path = storage_path(join('\\', [
+            $timelines = $this->timelineRepository->FindAllWhereIn([
+                $mapAllowedTimelineToDownload[$peserta->tahap_id]['min-lesser'],
+                $mapAllowedTimelineToDownload[$peserta->tahap_id]['max-greater']
+            ]);
+            
+            $now = Carbon::now();
+            if ($now->lessThan($timelines[0]) || $now->greaterThan($timelines[1]))
+                return $result;
+                
+            if (!is_null($answer->WaktuFinalisasi))
+                return $result;
+        }
+        else {
+            $admin = $this->adminRepository->Find($admin_id);
+            if (is_null($admin)){
+                return $result;
+            }
+
+            $answer = $this->jawabanRepository->FindByFileSubmit($answerFileParam);
+            if (is_null($answer)){
+                return $result;
+            }
+
+            $peserta = $this->pesertaRepository->FindByJawaban($answer->id);
+        }
+
+        $filePath = storage_path(join('\\', [
             'app\peserta',
             $peserta->KodePeserta,
             $this->folderJawabanTahap[$peserta->tahap_id],
             $answer->FileSubmit
         ]));
-        if (!File::exists($file_path))
+        if (!File::exists($filePath))
             return $result;
         
         $result['Downloadable'] = true;
@@ -210,5 +236,63 @@ class LombaService implements ILombaService
         ]);
         $result['Download File Name'] = $answer->FileName;
         return $result;
+    }
+
+    public function GetJawabansWithPesertaByTahap($tahap_id)
+    {
+        $result = $this->pesertaRepository->FindAllByTahapJoinJawabanAndJoinDetailPeserta($tahap_id);
+        return $result->groupBy('KodePeserta')->map(function ($item, $key) use ($tahap_id)
+        {
+            $waktuSubmit = is_null($item[0]->WaktuSubmit) 
+                            ? 'Belum Submit' 
+                            : Carbon::parse($item[0]->WaktuSubmit)->format('d F Y H:i:s');
+
+            $waktuFinalisasi = '';
+            if ($waktuSubmit == 'Belum Submit'){
+                $waktuFinalisasi = 'Belum Submit';
+            }
+            else if (is_null($item[0]->WaktuFinalisasi)){
+                $waktuFinalisasi = 'Belum Finalisasi';
+            }
+            else {
+                $waktuFinalisasi = Carbon::parse($item[0]->WaktuFinalisasi)->format('d F Y H:i:s');
+            }
+
+            $downloadUrl = '';
+            if (!is_null($item[0]->FileSubmit)){
+                $downloadUrl = route('download-data-lomba', [
+                    'tahap_id' => $tahap_id,
+                    'file' => Crypt::encrypt($item[0]->FileSubmit)
+                ]);
+            }
+
+            return [
+                'Kode Peserta' => $key,
+                'Peserta 1' => $item[0]->Nama,
+                'Peserta 2' => $item[1]->Nama,
+                'Nama File' => $item[0]->FileName ?? 'Belum Submit',
+                'File Submit' => $item[0]->FileSubmit ?? '',
+                'Waktu Submit' => $waktuSubmit,
+                'Waktu Finalisasi' => $waktuFinalisasi,
+                'Download URL' => $downloadUrl,
+            ];
+        })->values();
+    }
+
+    public function ChoosePesertaToNextPhase($kodePesertaList, $tahap_id)
+    {
+        $mapNextPhase = [
+            Tahap::TAHAP_1 => Tahap::TAHAP_2,
+            Tahap::TAHAP_2 => Tahap::TAHAP_3,
+            Tahap::TAHAP_3 => Tahap::SELESAI,
+        ];
+        $nextTahapId = $mapNextPhase[$tahap_id];
+        
+        $pesertaList = $this->pesertaRepository->FindAllWhereInByKodePeserta($kodePesertaList);
+        $pesertaList->each(function ($peserta, $key) use ($nextTahapId)
+        {
+            $peserta->tahap_id = $nextTahapId;
+            $this->pesertaRepository->InsertUpdate($peserta);
+        });
     }
 }

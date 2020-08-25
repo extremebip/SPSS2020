@@ -10,6 +10,12 @@ class Tahap
     public const TAHAP_3 = 4;
     public const SELESAI = 5;
 
+    public const FOLDER_JAWABAN = [
+        self::TAHAP_1 => 'tahap-1',
+        self::TAHAP_2 => 'tahap-2',
+        self::TAHAP_3 => 'tahap-3',
+    ];
+
     public static function GetConstantName($value)
     {
         $name = '';

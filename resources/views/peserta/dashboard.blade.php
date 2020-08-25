@@ -51,11 +51,4 @@
         @yield('dashboard-content')
     </div>
 </div>
-
-<a href="/dashboard/download?file={{ Crypt::encrypt('PT1') }}">Panduan 1</a>
-<a href="/dashboard/download?file={{ Crypt::encrypt('ST1') }}">Soal 1</a>
-<a href="/dashboard/download?file={{ Crypt::encrypt('PT2') }}">Panduan 2</a>
-<a href="/dashboard/download?file={{ Crypt::encrypt('ST2') }}">Soal 2</a>
-<a href="/dashboard/download?file={{ Crypt::encrypt('PT3') }}">Panduan 3</a>
-<a href="/dashboard/download?file={{ Crypt::encrypt('ST3') }}">Soal 3</a>
 @endsection

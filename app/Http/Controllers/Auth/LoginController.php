@@ -42,6 +42,7 @@ class LoginController extends Controller
     public function __construct(IAuthService $authService)
     {
         $this->middleware('guest')->except('logout');
+        $this->middleware('guest:admin')->except('logout');
         $this->authService = $authService;
         parent::__construct($authService);
     }
@@ -68,7 +69,7 @@ class LoginController extends Controller
     protected function validateLogin(Request $request)
     {
         $request->validate([
-            $this->username() => 'required|string',
+            $this->username() => 'required|string|email',
             'password' => 'required|string',
         ], $this->messages);
     }

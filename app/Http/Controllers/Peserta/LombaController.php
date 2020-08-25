@@ -53,6 +53,7 @@ class LombaController extends Controller
             
             return Storage::download($checkResult['File Path'], $checkResult['Download File Name']);
         } catch (\Exception $e) {
+            dd($e);
             return redirect()->route('dashboard');
         }
     }

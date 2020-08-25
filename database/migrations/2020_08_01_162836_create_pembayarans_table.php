@@ -20,6 +20,7 @@ class CreatePembayaransTable extends Migration
             $table->string('Bank');
             $table->string('BuktiTransfer')->nullable();
             $table->integer('StatusVerifikasi')->nullable();
+            $table->string('admin_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

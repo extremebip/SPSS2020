@@ -31,6 +31,13 @@ class RouteServiceProvider extends ServiceProvider
     public const DASHBOARD = '/dashboard';
 
     /**
+     * The path to the admin dashboard route
+     *
+     * @var string
+     */
+    public const ADMIN_DASHBOARD = '/admin';
+
+    /**
      * Define your route model bindings, pattern filters, etc.
      *
      * @return void
@@ -53,7 +60,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        //
+        $this->mapAdminWebRoutes();
     }
 
     /**
@@ -68,6 +75,21 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/web.php'));
+    }
+
+    /**
+     * Define admin spesific "web" routes for the appliaction
+     * 
+     * These routes receive similar middleware as regular web routes
+     * 
+     * @return void
+     */
+    public function mapAdminWebRoutes()
+    {
+        Route::prefix('admin')
+            ->middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/web/admins.php'));
     }
 
     /**

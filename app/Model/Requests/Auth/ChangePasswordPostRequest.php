@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ChangePasswordPostRequest extends PostRequest
 {
+    protected $passwordNotMatchErrorMessage = 'Kata sandi lama tidak sesuai';
     /**
      * Get the validation rules that apply to the request.
      *
@@ -15,11 +16,14 @@ class ChangePasswordPostRequest extends PostRequest
      */
     public function rules()
     {
+        $passwordNotMatchErrorMessage = $this->passwordNotMatchErrorMessage;
         return [
-            'old_password' => ['required', 'string', function ($attribute, $value, $fail){
-                    $peserta = Auth::user();
-                    if (!Hash::check($value, $peserta->password)){
-                        $fail('Kata sandi lama tidak sesuai');
+            'old_password' => ['required', 'string', function ($attribute, $value, $fail)
+                use ($passwordNotMatchErrorMessage)
+            {
+                    $user = Auth::user();
+                    if (!Hash::check($value, $user->password)){
+                        $fail($passwordNotMatchErrorMessage);
                     }
                 },
             ],

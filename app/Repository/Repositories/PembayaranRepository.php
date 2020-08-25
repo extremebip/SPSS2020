@@ -21,4 +21,9 @@ class PembayaranRepository extends BaseRepository implements IPembayaranReposito
     {
         return Pembayaran::withTrashed()->where('peserta_id', '=', $peserta_id)->get();
     }
+
+    public function FindAllByStatusVerifikasi($status_verifikasi)
+    {
+        return Pembayaran::where('StatusVerifikasi', '=', $status_verifikasi)->get();
+    }
 }

@@ -19,9 +19,9 @@ Route::get('/about', 'HomeController@about');
 Route::get('/seminar', 'HomeController@seminar');
 Route::get('/lomba', 'HomeController@lomba');
 
-Route::get('/timeline/reset', 'TestTimelineController@reset');
-Route::get('/timeline/{id?}', 'TestTimelineController@index');
-Route::post('/timeline', 'TestTimelineController@update')->name('update-timeline');
+// Route::get('/timeline/reset', 'TestTimelineController@reset');
+// Route::get('/timeline/{id?}', 'TestTimelineController@index');
+// Route::post('/timeline', 'TestTimelineController@update')->name('update-timeline');
 
 Auth::routes(['verify' => 'true']);
 
