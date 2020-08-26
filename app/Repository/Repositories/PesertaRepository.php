@@ -34,7 +34,7 @@ class PesertaRepository extends BaseRepository implements IPesertaRepository
                     'jawabans.FileName',
                     'jawabans.FileSubmit',
                     'jawabans.WaktuSubmit',
-                    'jawabans.WaktuFinalisasi',
+                    'jawabans.WaktuFinalisasi'
                  )
                  ->get();
     }

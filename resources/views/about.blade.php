@@ -5,7 +5,7 @@
 @section('site-content')
 <div class="container">
     <div class="fit-banner text-center">
-    <img src="{{ asset('storage/assets/images/spss-banner.PNG') }}">
+    <img src="{{ asset('storage/assets/images/spss-banner.png') }}">
     </div>
 
     <div class="row">

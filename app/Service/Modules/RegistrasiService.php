@@ -230,11 +230,10 @@ class RegistrasiService implements IRegistrasiService
             $result['Detail'] = [];
             $result['Detail']['Peserta'] = array_merge($detail_peserta
                     ->makeHidden(['created_at', 'updated_at', 'deleted_at', 'peserta_id'])
-                    ->toArray(),
+                    ->toArray()
             );
             $result['Detail']['Waktu Submit'] = $detail_peserta->first()->created_at;
         }
-        // dd($result);
         return $result;
     }
 

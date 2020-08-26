@@ -5,7 +5,7 @@
 @section('site-content')
 <div class="container">
     <div class="banner text-center">
-    <img src="{{ asset('storage/assets/images/spss-banner.PNG') }}">
+    <img src="{{ asset('storage/assets/images/spss-banner.png') }}">
     <div>
         <a class="btn btn-outline-success fit-content-btn" href="/register">Daftar</a>
         <a class="btn btn-outline-success fit-content-btn" href="/login">Masuk</a>
@@ -14,7 +14,7 @@
 
     <div class="summary flex">
     <div class="summary-logo">
-        <img src="{{ asset('storage/assets/logos/spss-logo.PNG') }}">
+        <img src="{{ asset('storage/assets/logos/spss-logo.png') }}">
     </div>
     <div class="summary-text">
         <span class="heading text-white">Statistical Project for Smart Student 2020</span>
@@ -32,7 +32,7 @@
         <div class="timeline text-center col-lg-6 col-md-12">
         <article class="heading text-white">Lomba Statistika</article>
         <article class="sub-heading text-white">Total Hadiah : Rp7.000.000,00</article>
-        <img src="{{ asset('storage/assets/images/spss-timeline.PNG') }}">
+        <img src="{{ asset('storage/assets/images/spss-timeline.png') }}">
         <div class="buttons">
             <a class="btn btn-outline-success fit-content-btn" href="/lomba">Lebih lanjut</a>
             <a class="btn btn-outline-success fit-content-btn" href="/register">Daftar</a>

@@ -15,7 +15,7 @@
   <body>
     <header>
       <nav class="navbar navbar-expand-md navbar-dark">
-          <a class="navbar-brand" href="/"><img src="{{ asset('storage/assets/logos/spss-logo.PNG') }}" width="50px" height="50px"></a>
+          <a class="navbar-brand" href="/"><img src="{{ asset('storage/assets/logos/spss-logo.png') }}" width="50px" height="50px"></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
           </button>

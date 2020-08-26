@@ -7,7 +7,7 @@
     
 <div class="container">
 <div class="w-100 small-banner text-center">
-<img src="{{ asset('storage/assets/images/spss-banner.PNG') }}">
+<img src="{{ asset('storage/assets/images/spss-banner.png') }}">
 </div>
 
 <div class="dual-content">
@@ -65,7 +65,7 @@
 
     <div class="text-center col-lg-12 col-md-12">
         <article class="penjelasan-text text-white">Linimasa</article>
-        <img src="{{ asset('storage/assets/images/spss-timeline.PNG') }}" class="w-100" style="margin-top: 20px;">
+        <img src="{{ asset('storage/assets/images/spss-timeline.png') }}" class="w-100" style="margin-top: 20px;">
     </div>
     </div>
 </div>
