@@ -21,6 +21,9 @@
                         <td>Nomor Handphone</td> <td>:</td> <td>{{ $peserta['Account']['No. HP'] }}</td>
                     </tr>
                     <tr>
+                        <td>Asal Universitas</td> <td>:</td> <td>{{ $peserta['Account']['Asal Universitas'] }}</td>
+                    </tr>
+                    <tr>
                         <td>Kode Peserta</td> <td>:</td> <td>{{ $peserta['Account']['Kode Peserta'] }}</td>
                     </tr>
                 </tbody>

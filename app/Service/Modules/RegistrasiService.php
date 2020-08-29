@@ -208,7 +208,8 @@ class RegistrasiService implements IRegistrasiService
                 'Kode Peserta' => $peserta->KodePeserta ?? 'Email Unverified',
                 'Nama' => $peserta->name,
                 'Email' => $peserta->email,
-                'No. HP' => $peserta->NoHP
+                'No. HP' => $peserta->NoHP,
+                'Asal Universitas' => $peserta->AsalUniversitas
             ]
         ];
 
