@@ -63,7 +63,7 @@ class FileController extends Controller
             if (!in_array($kodeFile, $this->generalFile))
                 throw new \Exception();
 
-            $filePath = storage_path('app\\file\\'.$this->storageFileName[$kodeFile]);
+            $filePath = storage_path('app/file/'.$this->storageFileName[$kodeFile]);
             if (!File::exists($filePath))
                 throw new \Exception();
             
@@ -88,7 +88,7 @@ class FileController extends Controller
             if (!$this->lombaService->CheckDownloadEligibility(Auth::user(), $kodeFile))
                 throw new \Exception();
 
-            $filePath = storage_path('app\\file\\'.$this->storageFileName[$kodeFile]);
+            $filePath = storage_path('app/file/'.$this->storageFileName[$kodeFile]);
             if (!File::exists($filePath))
                 throw new \Exception();
             

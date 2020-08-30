@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('title', 'Forgot Password')
+
 @section('site-content')
 <div class="container">
     <div class="fit-banner text-center">

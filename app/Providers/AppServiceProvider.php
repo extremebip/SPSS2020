@@ -55,6 +55,12 @@ class AppServiceProvider extends ServiceProvider
             $this->app->singleton("App\Service\Contracts\I{$service}", 
                              "App\Service\Modules\\{$service}");
         }
+
+        if (app()->environment('production')){
+            $this->app->bind('path.public', function() {
+                return realpath(base_path().'/../public_html');
+            });
+        }
     }
 
     /**

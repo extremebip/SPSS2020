@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('title', 'Register')
+
 @section('site-content')
 <div class="container">
     <div class="fit-banner text-center">

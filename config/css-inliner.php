@@ -14,8 +14,8 @@ return [
     */
 
     'css-files' => [
-        public_path('css/bootstrap.css'),
-        public_path('css/stylesheets.css'),
+        // public_path('css/bootstrap.css'),
+        // public_path('css/stylesheets.css'),
     ],
 
 ];
